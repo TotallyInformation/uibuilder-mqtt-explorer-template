@@ -5,33 +5,38 @@
 // @ts-ignore
 import uibuilder from '../uibuilder/uibuilder.esm.min.js'
 
-/** To DO
- * In the Front End
- * [ ] Add visual indicator to topics with data.
- * [ ] Add copy ability to topic names and values.
- * [ ] Add text (maybe truncated) to topics with values.
- * [ ] Add animation when new data arrives.
- * [ ] Add variable to restrict the number of kept messages per topic level.
- * [ ] Add search/filtering of topics.
- * [ ] Add ability to send a new msg to a topic.
- * [ ] Add ability to show other metadata (e.g. MQTT v5 properties).
- * [ ] Add charting of numeric data over time.
- * [ ] Add msg count and sub-topic count per topic level.
- * [ ] Add ability to remove topics or clear data.
- * [ ] Add ability to export data (e.g. JSON, CSV).
- * [ ] Highlight currently selected topic.
- * [ ] Colour-code retained messages in the topics list.
- * [ ] Add broker definition and edit ability.
- * 
- * In Node-RED
- * [ ] Add caching.
- * [ ] Allow dynamic changing of subscriptions & broker.
- */
+/** To DO - see the main README.md for the template */
 
 /** @type {HTMLElement} Get fixed ref to the more div */
 const elTopics = document.getElementById('topics')
 /** @type {HTMLElement} Get fixed ref to the details div */
 const elDetailContent = document.getElementById('detailContent')
+/** @type {HTMLElement} Get fixed ref to the DOM warning element */
+const elDomWarning = document.getElementById('domWarning')
+/** @type {HTMLElement} Get fixed ref to the DOM count display */
+const elDomCount = document.getElementById('domCount')
+
+/** Threshold for DOM element count warning
+ * @type {number}
+ */
+const DOM_WARNING_THRESHOLD = 1500
+
+/** Checks the DOM element count and updates the warning indicator
+ * @returns {number} The current DOM element count
+ */
+function checkDomElementCount() {
+    const count = document.getElementsByTagName('*').length
+    const topicsCount = elTopics.getElementsByTagName('*').length
+
+    if (count >= DOM_WARNING_THRESHOLD) {
+        elDomCount.textContent = `${count} total, ${topicsCount} in topics`
+        elDomWarning.hidden = false
+    } else {
+        elDomWarning.hidden = true
+    }
+
+    return count
+}
 
 // Specify an HTML ID compatible separator string for topics - cannot clash with MQTT topic chars and can only contain _ or -
 const topicSeparator = '___'
@@ -135,6 +140,9 @@ uibuilder.onChange('msg', (msg) => {
             elDetailContent.appendChild(clone)
         }
     }
+
+    // Check DOM element count after processing each message
+    checkDomElementCount()
 
     // console.groupEnd()
 })
