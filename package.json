@@ -1,6 +1,6 @@
 {
   "name": "mqtt-explorer",
-  "version": "2025-1-28",
+  "version": "2025-11-28-a",
   "private": true,
   "description": "A Node-RED replacement for the MQTT-Explorer app.",
   "browser": "./src/index.js",
@@ -19,15 +19,19 @@
     "uibuilder",
     "node-red",
     "node-red-contrib-uibuilder",
-    "mqtt"
+    "mqtt",
+    "web",
+    "socket.io",
+    "MQTT-Explorer",
+    "template"
   ],
   "author": "Julian Knight (Totally Information)",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/TotallyInformation/node-red-contrib-uibuilder",
-  "bugs": "https://github.com/TotallyInformation/node-red-contrib-uibuilder/issues",
+  "homepage": "https://github.com/TotallyInformation/uibuilder-mqtt-explorer-template",
+  "bugs": "https://github.com/TotallyInformation/uibuilder-mqtt-explorer-template/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TotallyInformation/node-red-contrib-uibuilder.git"
+    "url": "https://github.com/TotallyInformation/uibuilder-mqtt-explorer-template.git"
   },
   "browserslist": [
     "> 0.5%",

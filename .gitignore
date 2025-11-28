@@ -20,3 +20,6 @@ _old-svelte-version/src/MqttMessageView.svelte
 _old-svelte-version/src/MqttView.svelte
 _old-svelte-version/src/SyntaxHighlight.svelte
 _old-svelte-version/src/TreeView.svelte
+_src.1/index.css
+_src.1/index.html
+_src.1/index.mjs
