@@ -1,0 +1,57 @@
+/* Load defaults from `<userDir>/node_modules/node-red-contrib-uibuilder/front-end/uib-brand.min.css`
+ * This is optional but reasonably complete and allows for light/dark mode switching.
+ */
+@import url("../uibuilder/uib-brand.min.css");
+
+/* for any element that has an id that contains ___ use the following style */
+[id*="___"] {
+    margin-left: 1em;
+}
+
+details {
+    grid-area: topics;
+
+    &:not(.hasData) > summary {
+        font-weight: bold;
+    }
+    &.hasData > summary {
+        font-style: italic;
+    }
+}
+
+/* Override the uib-brand std height of 22em */
+.syntax-highlight {
+    height: auto;
+}
+
+/* Format #more as a grid using 2 columns with named areas */
+#container {
+    display: grid;
+    gap: 1em;
+    /* grid-template-columns: 1fr 1fr; */
+    grid-template-areas:
+        "topics details";
+}
+
+#topics {
+    grid-area: topics;
+    border-right: 1px solid var(--text1);
+    min-width: 15em;
+    overflow-y: auto;
+    max-height: 100vh;
+
+    /* If a topics>details has no details inside, make the summary inline rather than block */
+    details:not(:has(details)) > summary {
+        display: inline;
+
+        /* and hide the disclosure triangle */
+        &::-webkit-details-marker {
+            display: none;
+        }
+    }
+}
+
+#details {
+    grid-area: details;
+    /* padding-left: 1em; */
+}

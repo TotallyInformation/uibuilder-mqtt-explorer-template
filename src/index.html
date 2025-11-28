@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="../uibuilder/images/node-blue.ico">
+
+    <title>MQTT Explorer - Node-RED UIBUILDER</title>
+    <meta name="description" content="Node-RED UIBUILDER - MQTT Explorer">
+
+    <!-- Your own CSS (defaults to loading uibuilders css)-->
+    <link type="text/css" rel="stylesheet" href="./index.css" media="all">
+
+    <script type="module" src="./index.mjs"></script>
+
+</head><body>
+    
+    <h1 class="with-subtitle">MQTT Explorer</h1>
+    <div role="doc-subtitle">Using UIBUILDER for Node-RED</div>
+
+    <!-- '#more' is used as a parent for dynamic HTML content in examples -->
+    <div id="more" uib-topic="more"></div>
+    <div id="container">
+        <div id="topics">
+            <h2>MQTT Topics</h2>
+        </div>
+        <div id="details">
+            <h2>Message Details</h2>
+            <div id="detailContent">Click on a topic to see message details here.</div>
+        </div>
+    </div>
+
+</body></html>
