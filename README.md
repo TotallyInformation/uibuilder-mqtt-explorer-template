@@ -12,6 +12,8 @@ Its motivation was as a pure Node-RED replacement for the MQTT Explorer desktop 
 >
 > Also note that loading a UIBUILDER template **OVERWRITES** existing files in the uibuilder instance folder. So be careful not to overwrite any custom code you may have already written.
 
+This template came out of some discussions on the [Node-RED forum about creating a web-based MQTT explorer using uibuilder](https://discourse.nodered.org/t/node-red-version-of-mqtt-explorer/99738). It is inspired by the [MQTT Explorer desktop application](https://mqtt-explorer.com/).
+
 ## Installation
 
 Add a uibuilder node to your Node-RED flow. Give it a unique name and URL. Then deploy the flow. This creates the server file system structure for the uibuilder instance.
@@ -75,3 +77,33 @@ The template may be used however you like for both commercial and non-commercial
 If this template is useful to you, a star on the GitHub repository would be appreciated! If it provides value, please consider some sponsorship to help support ongoing development.
 
 If you find any bugs or have any feature requests, please open an issue on the GitHub repository or discuss it on the Node-RED forum using the tag `uibuilder` to make sure I see it.
+
+## Future roadmap
+
+The initial release is no more than a basic proof-of-concept. However, if there is sufficient interest, I will continue to develop it further.
+
+I will, for now, keep the backlog here.
+
+### In the Front End (this template)
+
+* [ ] Add visual indicator to topics with data.
+* [ ] Add copy ability to topic names and values.
+* [ ] Add text (maybe truncated) to topics with values.
+* [ ] Add animation when new data arrives.
+* [ ] Add variable to restrict the number of kept messages per topic level.
+* [ ] Add search/filtering of topics.
+* [ ] Add ability to send a new msg to a topic.
+* [ ] Add ability to show other metadata (e.g. MQTT v5 properties).
+* [ ] Add charting of numeric data over time.
+* [ ] Add msg count and sub-topic count per topic level.
+* [ ] Add ability to remove topics or clear data.
+* [ ] Add ability to export data (e.g. JSON, CSV).
+* [ ] Highlight currently selected topic.
+* [ ] Colour-code retained messages in the topics list.
+* [ ] Add broker definition and edit ability.
+
+### In Node-RED (via an example flow)
+
+* [ ] Add caching.
+* [ ] Allow dynamic changing of subscriptions & broker.
+ 
