@@ -14,6 +14,14 @@ Its motivation was as a pure Node-RED replacement for the MQTT Explorer desktop 
 
 This template came out of some discussions on the [Node-RED forum about creating a web-based MQTT explorer using uibuilder](https://discourse.nodered.org/t/node-red-version-of-mqtt-explorer/99738). It is inspired by the [MQTT Explorer desktop application](https://mqtt-explorer.com/).
 
+## Ideas for using this template
+
+Remember that, with Node-RED and UIBUILDER, you can have multiple instances of UIBUILDER. So if you have a high-volume MQTT topic, you could always filter that to a separate uibuilder instance to avoid overwhelming the UI.
+
+It would also be possible to link the front-end direct to MQTT using a JavaScript MQTT client library such as [MQTT.js](https://github.com/mqttjs/MQTT.js). This would reduce the load on Node-RED and uibuilder but would require more complex front-end code to handle MQTT connections, subscriptions, and message handling.
+
+UIBUILDER does not, by default, cache any messages. So no MQTT messages will be available when a client first connects. This includes MQTT _retained_ messages. Use the `uib-cache` node to provide caching of messages if required. You may want to set different cache sizes for different topics or topic hierarchies depending on your use case. In that case, use a switch node to separate out different topic hierarchies to multiple different `uib-cache` nodes. These can all be connected to the same or separate uibuilder instances as needed.
+
 ## Installation
 
 Add a uibuilder node to your Node-RED flow. Give it a unique name and URL. Then deploy the flow. This creates the server file system structure for the uibuilder instance.
@@ -86,24 +94,26 @@ I will, for now, keep the backlog here.
 
 ### In the Front End (this template)
 
-* [ ] Add visual indicator to topics with data.
-* [ ] Add copy ability to topic names and values.
-* [ ] Add text (maybe truncated) to topics with values.
 * [ ] Add animation when new data arrives.
 * [ ] Add variable to restrict the number of kept messages per topic level.
 * [ ] Add search/filtering of topics.
-* [ ] Add ability to send a new msg to a topic.
-* [ ] Add ability to show other metadata (e.g. MQTT v5 properties).
 * [ ] Add charting of numeric data over time.
-* [ ] Add msg count and sub-topic count per topic level.
-* [ ] Add ability to remove topics or clear data.
+* [ ] Add ability to remove topics or clear data, clear history.
 * [ ] Add ability to export data (e.g. JSON, CSV).
 * [ ] Highlight currently selected topic.
 * [ ] Colour-code retained messages in the topics list.
 * [ ] Add broker definition and edit ability.
+* [ ] Add JSON editor for publish message payloads.
+* [ ] Improve accessibility (ARIA roles, keyboard navigation, screen reader support).
+* [x] Add visual indicator to topics with data.
+* [x] Add copy ability to topic names and values.
+* [x] Add text (maybe truncated) to topics with values.
+* [x] Add ability to send a new msg to a topic.
+* [x] Add ability to show other metadata (e.g. MQTT v5 properties).
+* [x] Add msg count and sub-topic count per topic level.
 
 ### In Node-RED (via an example flow)
 
 * [ ] Add caching.
-* [ ] Allow dynamic changing of subscriptions & broker.
+* [x] Allow dynamic changing of subscriptions & broker.
  
