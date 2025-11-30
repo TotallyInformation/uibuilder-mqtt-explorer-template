@@ -1,6 +1,13 @@
 # Changelog for UIBUILDER MQTT Explorer
 All notable changes to this project will be documented in this file.
 
+## 2025-11-30
+
+* Another major rewrite to improve performance and reduce memory and CPU usage.
+* MQTT v5 properties are now displayed in the details panel if present.
+* Bug fixes.
+* Removed Raw Message section from details panel. No longer needed as MQTT v5 properties are shown directly.
+
 ## 2025-11-29
 
 * Publish new MQTT msg added to the details panel.

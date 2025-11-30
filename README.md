@@ -94,17 +94,18 @@ I will, for now, keep the backlog here.
 
 ### In the Front End (this template)
 
+* [ ] Add ability to remove topics or clear data, clear history.
 * [ ] Add animation when new data arrives.
 * [ ] Add variable to restrict the number of kept messages per topic level.
 * [ ] Add search/filtering of topics.
 * [ ] Add charting of numeric data over time.
-* [ ] Add ability to remove topics or clear data, clear history.
 * [ ] Add ability to export data (e.g. JSON, CSV).
 * [ ] Highlight currently selected topic.
 * [ ] Colour-code retained messages in the topics list.
 * [ ] Add broker definition and edit ability.
 * [ ] Add JSON editor for publish message payloads.
 * [ ] Improve accessibility (ARIA roles, keyboard navigation, screen reader support).
+* [x] Add MQTT v5 properties to the details panel.
 * [x] Add visual indicator to topics with data.
 * [x] Add copy ability to topic names and values.
 * [x] Add text (maybe truncated) to topics with values.

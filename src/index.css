@@ -279,6 +279,93 @@
     margin: 0;
 }
 
+/* Show more button */
+.show-more-btn {
+    display: block;
+    width: 100%;
+    padding: 0.5em;
+    margin-top: 0.5em;
+    background-color: hsl(0 0% 50% / 0.1);
+    border: 1px dashed hsl(0 0% 50% / 0.3);
+    border-radius: 0.25em;
+    color: hsl(0 0% 40%);
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.show-more-btn:hover {
+    background-color: hsl(0 0% 50% / 0.2);
+}
+
+/* MQTT v5 Properties */
+.mqtt-v5-properties {
+    margin-top: 0.75em;
+    border-radius: 0.25em;
+    border-left: 3px solid hsl(210 80% 50%);
+    background-color: hsl(210 50% 50% / 0.1);
+}
+
+.mqtt-v5-properties > summary {
+    padding: 0.5em;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.mqtt-v5-properties > summary::-webkit-details-marker {
+    display: none;
+}
+
+.mqtt-v5-properties > summary::before {
+    content: '▶';
+    font-size: 0.75em;
+    color: hsl(210 80% 50%);
+    transition: transform 0.15s ease-in-out;
+}
+
+.mqtt-v5-properties[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.mqtt-v5-properties > summary h4 {
+    margin: 0;
+    font-size: 0.9em;
+    color: hsl(210 80% 40%);
+}
+
+.mqtt-v5-properties-content {
+    padding: 0 0.5em 0.5em 0.5em;
+}
+
+.mqtt-prop {
+    margin-bottom: 0.375em;
+}
+
+.mqtt-prop:last-child {
+    margin-bottom: 0;
+}
+
+.mqtt-prop-label {
+    font-weight: bold;
+    font-size: 0.85em;
+    color: hsl(0 0% 40%);
+    margin-right: 0.5em;
+}
+
+.mqtt-prop-value {
+    font-size: 0.9em;
+    font-family: monospace;
+    word-break: break-all;
+}
+
+.mqtt-prop-json {
+    margin: 0.25em 0 0 0;
+    font-size: 0.85em;
+}
+
 /* Publish section */
 .publish-section {
     margin-top: 1em;
@@ -424,6 +511,22 @@
 
     .value-preview.complex-value {
         color: hsl(0 0% 50%);
+    }
+
+    .mqtt-v5-properties {
+        background-color: hsl(210 50% 30% / 0.2);
+    }
+
+    .mqtt-v5-properties > summary::before {
+        color: hsl(210 80% 60%);
+    }
+
+    .mqtt-v5-properties > summary h4 {
+        color: hsl(210 80% 60%);
+    }
+
+    .mqtt-prop-label {
+        color: hsl(0 0% 65%);
     }
 
     .form-group input[type="text"],
