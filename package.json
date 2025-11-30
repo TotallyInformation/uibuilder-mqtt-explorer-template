@@ -1,6 +1,6 @@
 {
   "name": "mqtt-explorer",
-  "version": "2025-11-28-a",
+  "version": "2025-11-29",
   "private": true,
   "description": "A Node-RED replacement for the MQTT-Explorer app.",
   "browser": "./src/index.js",

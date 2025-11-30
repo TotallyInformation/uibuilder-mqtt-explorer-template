@@ -1,6 +1,16 @@
 # Changelog for UIBUILDER MQTT Explorer
 All notable changes to this project will be documented in this file.
 
+## 2025-11-29
+
+* Publish new MQTT msg added to the details panel.
+* Top level of topic tree is now sorted alphabetically.
+* Raw message section added to the details panel, showing the full incoming message object as received from Node-RED.
+* Summary of current value added to the topic tree. Auto-trimsed if too long.
+* Expand/collapse icon re-added to topic tree items.
+* Message history is now collapsible in the details panel.
+* Bug fixes.
+
 ## 2025-11-28-a
 
 - Rewrite to improve performance when handling large numbers of topics and messages.

@@ -25,6 +25,11 @@ const elStats = document.getElementById('stats')
  */
 const MAX_HISTORY_PER_TOPIC = 50
 
+/** Maximum length for value preview display
+ * @type {number}
+ */
+const MAX_VALUE_PREVIEW_LENGTH = 20
+
 // #endregion
 
 // #region --- Type Definitions ---
@@ -129,6 +134,8 @@ function storeMessage(msg) {
             timestamp: msg.lastUpdate || new Date().toISOString(),
             qos: msg.qos ?? 0,
             retain: msg.retain ?? false,
+            // JK: Keep a copy of the original msg
+            originalMsg: msg,
         })
 
         stats.totalMessages++
@@ -164,11 +171,42 @@ function renderTopicNode(name, node, fullPath) {
 
     details.dataset.topicPath = fullPath
 
+    // Add expand/collapse indicator for nodes with children
+    if (node.children.size > 0) {
+        const expandIndicator = document.createElement('span')
+        expandIndicator.className = 'expand-indicator'
+        expandIndicator.textContent = '▶'
+        expandIndicator.setAttribute('aria-hidden', 'true')
+        summary.appendChild(expandIndicator)
+    } else {
+        // Placeholder to maintain alignment
+        const placeholder = document.createElement('span')
+        placeholder.className = 'expand-placeholder'
+        placeholder.setAttribute('aria-hidden', 'true')
+        summary.appendChild(placeholder)
+    }
+
     // Build summary content
     const nameSpan = document.createElement('span')
     nameSpan.className = 'topic-name'
     nameSpan.textContent = name
     summary.appendChild(nameSpan)
+
+    // Add simple value preview if latest message has a simple value
+    if (node.messages.length > 0) {
+        const latestPayload = node.messages[0].payload
+        const valuePreview = document.createElement('span')
+        valuePreview.className = 'value-preview'
+        if (isSimpleValue(latestPayload)) {
+            valuePreview.textContent = formatValuePreview(latestPayload)
+            valuePreview.title = String(parsePayload(latestPayload))
+        } else {
+            valuePreview.textContent = '{…}'
+            valuePreview.title = 'Complex value - click to view details'
+            valuePreview.classList.add('complex-value')
+        }
+        summary.appendChild(valuePreview)
+    }
 
     // Add message count badge if has messages
     if (node.messages.length > 0) {
@@ -225,11 +263,33 @@ function renderTopicLevel(nodes, container, pathPrefix = '') {
             // Update existing node
             updateTopicNode(existingDetails, node)
         } else {
-            // Create new node
+            // Create new node and insert in sorted position
             const details = renderTopicNode(name, node, fullPath)
-            container.appendChild(details)
+            insertNodeSorted(container, details, name)
         }
     }
+}
+
+/** Inserts a topic node element in alphabetically sorted position
+ * @param {HTMLElement} container - Parent container element
+ * @param {HTMLElement} newNode - The new details element to insert
+ * @param {string} name - The topic name for comparison
+ */
+function insertNodeSorted(container, newNode, name) {
+    const existingNodes = container.querySelectorAll(':scope > details[data-topic-path]')
+
+    for (const existingNode of existingNodes) {
+        const existingPath = existingNode.dataset.topicPath
+        const existingName = existingPath.split('/').pop()
+
+        if (name.localeCompare(existingName) < 0) {
+            container.insertBefore(newNode, existingNode)
+            return
+        }
+    }
+
+    // If no insertion point found, append at end
+    container.appendChild(newNode)
 }
 
 /** Updates an existing topic node element
@@ -239,7 +299,36 @@ function renderTopicLevel(nodes, container, pathPrefix = '') {
 function updateTopicNode(details, node) {
     const summary = details.querySelector(':scope > summary')
     let badge = summary.querySelector('.message-count')
+    let childIndicator = summary.querySelector('.child-count')
+    let valuePreview = summary.querySelector('.value-preview')
 
+    // Update simple value preview
+    if (node.messages.length > 0) {
+        const latestPayload = node.messages[0].payload
+        if (!valuePreview) {
+            valuePreview = document.createElement('span')
+            valuePreview.className = 'value-preview'
+            // Insert after topic-name
+            const topicName = summary.querySelector('.topic-name')
+            if (topicName?.nextSibling) {
+                summary.insertBefore(valuePreview, topicName.nextSibling)
+            } else {
+                summary.appendChild(valuePreview)
+            }
+        }
+
+        if (isSimpleValue(latestPayload)) {
+            valuePreview.textContent = formatValuePreview(latestPayload)
+            valuePreview.title = String(parsePayload(latestPayload))
+            valuePreview.classList.remove('complex-value')
+        } else {
+            valuePreview.textContent = '{…}'
+            valuePreview.title = 'Complex value - click to view details'
+            valuePreview.classList.add('complex-value')
+        }
+    }
+
+    // Update message count badge
     if (node.messages.length > 0) {
         details.classList.add('hasData')
 
@@ -256,6 +345,50 @@ function updateTopicNode(details, node) {
 
         badge.textContent = `${node.messages.length}`
         badge.title = `${node.messages.length} message(s) stored`
+    }
+
+    // Update child count indicator
+    if (node.children.size > 0) {
+        // Add expand indicator if not present
+        let expandIndicator = summary.querySelector('.expand-indicator')
+        if (!expandIndicator) {
+            // Remove placeholder if present
+            const placeholder = summary.querySelector('.expand-placeholder')
+            if (placeholder) {
+                placeholder.remove()
+            }
+            // Add expand indicator at the start
+            expandIndicator = document.createElement('span')
+            expandIndicator.className = 'expand-indicator'
+            expandIndicator.textContent = '▶'
+            expandIndicator.setAttribute('aria-hidden', 'true')
+            summary.insertBefore(expandIndicator, summary.firstChild)
+        }
+
+        if (!childIndicator) {
+            childIndicator = document.createElement('span')
+            childIndicator.className = 'child-count'
+            summary.appendChild(childIndicator)
+        }
+
+        childIndicator.textContent = `▸ ${node.children.size}`
+        childIndicator.title = `${node.children.size} sub-topic(s)`
+
+        // Ensure child container exists for lazy loading
+        let childContainer = details.querySelector(':scope > .topic-children')
+        if (!childContainer) {
+            childContainer = document.createElement('div')
+            childContainer.className = 'topic-children'
+            details.appendChild(childContainer)
+
+            // Add lazy-load listener
+            details.addEventListener('toggle', () => {
+                if (details.open && childContainer.children.length === 0) {
+                    const fullPath = details.dataset.topicPath
+                    renderTopicLevel(node.children, childContainer, fullPath)
+                }
+            })
+        }
     }
 
     // Update children if expanded
@@ -289,15 +422,87 @@ function parsePayload(payload) {
     return payload
 }
 
+/** Checks if a value is simple (can be displayed inline)
+ * @param {unknown} value - The value to check
+ * @returns {boolean} True if the value is simple
+ */
+function isSimpleValue(value) {
+    const parsed = parsePayload(value)
+    return parsed === null ||
+           typeof parsed === 'string' ||
+           typeof parsed === 'number' ||
+           typeof parsed === 'boolean'
+}
+
+/** Formats a simple value for inline preview display
+ * @param {unknown} value - The value to format
+ * @returns {string} Formatted and truncated string
+ */
+function formatValuePreview(value) {
+    const parsed = parsePayload(value)
+
+    let display
+    if (parsed === null) {
+        display = 'null'
+    } else if (typeof parsed === 'boolean') {
+        display = parsed ? 'true' : 'false'
+    } else if (typeof parsed === 'number') {
+        display = String(parsed)
+    } else {
+        display = String(parsed)
+    }
+
+    // Truncate if too long
+    if (display.length > MAX_VALUE_PREVIEW_LENGTH) {
+        return display.substring(0, MAX_VALUE_PREVIEW_LENGTH - 1) + '…'
+    }
+
+    return display
+}
+
 /** Renders the detail panel for a selected topic
  * @param {TopicNode} node - Topic node to display
  * @param {string} topicPath - Full topic path
  */
 function renderDetailPanel(node, topicPath) {
+    const publishSection = `
+        <details class="publish-section">
+            <summary><h3>Publish</h3></summary>
+            <div class="publish-form">
+                <div class="form-group">
+                    <label for="publishTopic">Topic</label>
+                    <input type="text" id="publishTopic" value="${topicPath}" />
+                </div>
+                <div class="form-group">
+                    <label for="publishValue">Value</label>
+                    <textarea id="publishValue" rows="4"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="publishQos">QoS</label>
+                        <select id="publishQos">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-group--checkbox">
+                        <label>
+                            <input type="checkbox" id="publishRetain" />
+                            Retain
+                        </label>
+                    </div>
+                    <button type="button" id="publishBtn" class="publish-btn">Publish</button>
+                </div>
+            </div>
+        </details>
+    `
+
     if (node.messages.length === 0) {
         elDetailContent.innerHTML = `
             <p class="topic-path"><strong>Topic:</strong> ${topicPath}</p>
             <p class="no-messages">No messages received for this topic yet.</p>
+            ${publishSection}
         `
         return
     }
@@ -319,19 +524,62 @@ function renderDetailPanel(node, topicPath) {
         `
     }).join('')
 
+    // Build raw message object from latest message
+    const latestMsg = node.messages[0]
+    const rawMessage = latestMsg.originalMsg
+
     elDetailContent.innerHTML = `
         <p class="topic-path"><strong>Topic:</strong> ${topicPath}</p>
         <p class="message-stats"><strong>Messages stored:</strong> ${node.messages.length} (max ${MAX_HISTORY_PER_TOPIC})</p>
-        <div class="message-history">
-            <h3>Message History</h3>
+        <details class="raw-message-section">
+            <summary><h3>Raw Message</h3></summary>
+            <div class="raw-message-content">
+                <pre class="syntax-highlight">${uibuilder.syntaxHighlight(rawMessage)}</pre>
+            </div>
+        </details>
+        <details class="message-history" open>
+            <summary><h3>Message History</h3></summary>
             ${messagesHtml}
-        </div>
+        </details>
+        ${publishSection}
     `
 }
 
 // #endregion
 
 // #region --- Event Handlers ---
+
+// Event delegation for publish button
+elDetailContent.addEventListener('click', (event) => {
+    if (event.target.id !== 'publishBtn') return
+
+    const cmd = 'publish'
+    const topic = document.getElementById('publishTopic').value.trim()
+    const value = document.getElementById('publishValue').value
+    const qos = parseInt(document.getElementById('publishQos').value, 10)
+    const retain = document.getElementById('publishRetain').checked
+
+    if (!topic) {
+        alert('Topic is required')
+        return
+    }
+
+    // Try to parse value as JSON, otherwise send as string
+    let payload
+    try {
+        payload = JSON.parse(value)
+    } catch {
+        payload = value
+    }
+
+    uibuilder.send({
+        cmd,
+        topic,
+        payload,
+        qos,
+        retain,
+    })
+})
 
 // Event delegation for topic selection
 elTopicTree.addEventListener('click', (event) => {

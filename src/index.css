@@ -51,10 +51,36 @@
     cursor: pointer;
     border-radius: 0.25em;
     user-select: none;
+    list-style: none;
+}
+
+#topicTree summary::-webkit-details-marker {
+    display: none;
 }
 
 #topicTree summary:hover {
     background-color: hsl(0 0% 50% / 0.1);
+}
+
+/* Expand/collapse indicator */
+.expand-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    font-size: 0.75em;
+    color: hsl(0 0% 50%);
+    transition: transform 0.15s ease-in-out;
+}
+
+#topicTree details[open] > summary > .expand-indicator {
+    transform: rotate(90deg);
+}
+
+/* Placeholder for leaf nodes to maintain alignment */
+.expand-placeholder {
+    display: inline-block;
+    width: 1em;
 }
 
 #topicTree details.selected > summary {
@@ -84,20 +110,30 @@
     border-radius: 0.75em;
 }
 
+/* Simple value preview */
+.value-preview {
+    font-size: 0.85em;
+    font-weight: normal;
+    font-style: normal;
+    color: hsl(0 0% 45%);
+    max-width: 12em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.value-preview.complex-value {
+    font-style: italic;
+    color: hsl(0 0% 55%);
+}
+
 /* Child count indicator */
 .child-count {
     font-size: 0.75em;
     color: hsl(0 0% 50%);
     margin-left: auto;
-}
-
-/* Hide disclosure marker for leaf nodes */
-#topicTree details:not(:has(.topic-children)) > summary {
-    list-style: none;
-}
-
-#topicTree details:not(:has(.topic-children)) > summary::-webkit-details-marker {
-    display: none;
 }
 
 /* #endregion */
@@ -126,14 +162,84 @@
     font-style: italic;
 }
 
-/* Message history section */
-.message-history h3 {
-    margin-bottom: 0.5em;
+/* Raw message section */
+.raw-message-section {
+    margin-bottom: 1em;
+}
+
+.raw-message-section > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.raw-message-section > summary::-webkit-details-marker {
+    display: none;
+}
+
+.raw-message-section > summary::before {
+    content: '▶';
+    font-size: 0.75em;
+    color: hsl(0 0% 50%);
+    transition: transform 0.15s ease-in-out;
+}
+
+.raw-message-section[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.raw-message-section > summary h3 {
+    display: inline;
+    margin: 0;
     border-bottom: 1px solid var(--text1);
     padding-bottom: 0.25em;
+    flex: 1;
+}
+
+.raw-message-content {
+    margin-top: 0.5em;
+}
+
+.raw-message-content pre {
+    margin: 0;
+}
+
+/* Message history section */
+.message-history > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.message-history > summary::-webkit-details-marker {
+    display: none;
+}
+
+.message-history > summary::before {
+    content: '▶';
+    font-size: 0.75em;
+    color: hsl(0 0% 50%);
+    transition: transform 0.15s ease-in-out;
+}
+
+.message-history[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.message-history > summary h3 {
+    display: inline;
+    margin: 0;
+    border-bottom: 1px solid var(--text1);
+    padding-bottom: 0.25em;
+    flex: 1;
 }
 
 .message-entry {
+    margin-top: 0.5em;
     margin-bottom: 0.5em;
     border: 1px solid hsl(0 0% 50% / 0.3);
     border-radius: 0.25em;
@@ -173,6 +279,119 @@
     margin: 0;
 }
 
+/* Publish section */
+.publish-section {
+    margin-top: 1em;
+}
+
+.publish-section > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.publish-section > summary::-webkit-details-marker {
+    display: none;
+}
+
+.publish-section > summary::before {
+    content: '▶';
+    font-size: 0.75em;
+    color: hsl(0 0% 50%);
+    transition: transform 0.15s ease-in-out;
+}
+
+.publish-section[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.publish-section > summary h3 {
+    display: inline;
+    margin: 0;
+    border-bottom: 1px solid var(--text1);
+    padding-bottom: 0.25em;
+    flex: 1;
+}
+
+.publish-form {
+    margin-top: 0.75em;
+}
+
+.form-group {
+    margin-bottom: 0.75em;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.25em;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid hsl(0 0% 50% / 0.3);
+    border-radius: 0.25em;
+    font-family: inherit;
+    font-size: 1em;
+    background-color: var(--surface2, hsl(0 0% 98%));
+    color: var(--text1, hsl(0 0% 10%));
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 4em;
+}
+
+.form-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+.form-group--checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.form-group--checkbox input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.publish-btn {
+    padding: 0.5em 1.5em;
+    background-color: hsl(210 100% 50%);
+    color: hsl(0 0% 100%);
+    border: none;
+    border-radius: 0.25em;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.publish-btn:hover {
+    background-color: hsl(210 100% 40%);
+}
+
+.publish-btn:active {
+    background-color: hsl(210 100% 35%);
+}
+
 /* #endregion */
 
 /* #region --- Stats Bar --- */
@@ -197,6 +416,33 @@
 
     #topicTree details.selected > summary {
         background-color: hsl(210 80% 40% / 0.3);
+    }
+
+    .value-preview {
+        color: hsl(0 0% 60%);
+    }
+
+    .value-preview.complex-value {
+        color: hsl(0 0% 50%);
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea,
+    .form-group select {
+        background-color: var(--surface2, hsl(0 0% 15%));
+        border-color: hsl(0 0% 40% / 0.5);
+    }
+
+    .publish-btn {
+        background-color: hsl(210 80% 45%);
+    }
+
+    .publish-btn:hover {
+        background-color: hsl(210 80% 55%);
+    }
+
+    .publish-btn:active {
+        background-color: hsl(210 80% 40%);
     }
 }
 
